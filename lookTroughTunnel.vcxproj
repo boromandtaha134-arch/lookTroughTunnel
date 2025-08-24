@@ -20,10 +20,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core.cpp" />
-    <ClCompile Include="pocketListener.cpp" />
+    <ClCompile Include="packetListener.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pocketListener.h" />
+    <ClInclude Include="packetListener.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

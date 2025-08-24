@@ -7,11 +7,12 @@
 #include <thread>
 #include <atomic>
 
-#include "pocketListener.h"
+#include "packetListener.h"
 
 
-void packetHandler(u_char* user, const struct pcap_pkthdr* header, const u_char* packet) {
-    std::cout << "Got a packet! Length: " << header->len << " bytes" << std::endl;
+void packetHandler(u_char* user, const struct pcap_pkthdr* header, const u_char* packet) 
+{
+    std::cout << "Got a packet! Length: " << header->len << " bytes" << '\n';
 }
 
 void collectingLoop(pcap_t* handle) 
@@ -21,7 +22,8 @@ void collectingLoop(pcap_t* handle)
     }
 }
 
-int main() {
+int main() 
+{
     Listener listener;
     std::vector<pcap_if_t*> devices = listener.deviceInit();
     pcap_if_t* currentDevice = listener.devicePicker();
