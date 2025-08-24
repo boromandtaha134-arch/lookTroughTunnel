@@ -28,3 +28,4 @@ We value contributors who engage in **significant and ongoing development**. Suc
    ```bash
    git checkout -b feature/my-feature
    ```
+## If you are interested in long-term collaboration or partnership, please open an issue or contact us directly via GitHub. We will discuss your role and potential revenue sharing for the Pro version.
