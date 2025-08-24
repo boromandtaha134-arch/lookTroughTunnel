@@ -1,5 +1,5 @@
-# lookTroughTunnel
-# 🛰️ BSCore – Desktop Traffic Interceptor
+lookTroughTunnel
+Desktop Traffic Interceptor
 
 **lookThrough** is a lightweight desktop application designed to **capture, log, and analyze network traffic** from any desktop application in real-time.  
 Think of it as a بull of potential and extensible alternative to tools like **Wireshark** or **Burp Suite**, but optimized for **desktop apps traffic monitoring**.
