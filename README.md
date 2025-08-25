@@ -17,7 +17,7 @@ It targets a gap between generic packet sniffers and web-focused proxies by prov
 ---
 
 ## Quick links
-- Repository: `https://github.com/<your-username>/lookThroughTunnel`
+- Repository: `https://github.com/<boromandtaha134-arch>/lookThroughTunnel`
 - Issues & feature requests: `https://github.com/<boromandtaha134-arch>/lookThroughTunnel/issues`
 - Contributing guide: `CONTRIBUTING.md`
 - License: MIT `LICENSE`
