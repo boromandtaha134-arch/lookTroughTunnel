@@ -3,8 +3,11 @@
   <ItemGroup>
     <ClCompile Include="core.cpp" />
     <ClCompile Include="packetListener.cpp" />
+    <ClCompile Include="packetHandling.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="packetListener.h" />
+    <ClInclude Include="IPtypes.h" />
+    <ClInclude Include="packetHandling.h" />
   </ItemGroup>
 </Project>

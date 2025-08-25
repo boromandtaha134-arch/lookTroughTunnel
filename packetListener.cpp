@@ -42,14 +42,14 @@ pcap_if_t* Listener::devicePicker()
     for (pcap_if_t* device : devices)
     {
         ++counter;
-        std::cout << "\t" << counter << ')' << device->name << '\n';
+        std::cout << "\t" << counter << ')' << device->name << ": " << device->description << '\n';
 
     }
 
     std::cout << "choose device by device number: ";
     int pickedDevice;
     std::cin >> pickedDevice;
-    return devices[pickedDevice];
+    return devices[pickedDevice - 1];
 }
 
 pcap_t* Listener::handelInit(pcap_if_t* device,int pocketSize, bool promisc, int time) 
