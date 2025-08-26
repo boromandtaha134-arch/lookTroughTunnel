@@ -39,12 +39,12 @@ public:
     EthernetHeader(const u_char* packet) : PacketHandlerBody(packet)
     {
         EtherHdr* eth = (EtherHdr*)packetGetter();
-        std::cout << "Source MAC:      %02X:%02X:%02X:%02X:%02X:%02X\n",
-            eth->src[0], eth->src[1], eth->src[2],
-            eth->src[3], eth->src[4], eth->src[5];
-        std::cout << "Destination MAC: %02X:%02X:%02X:%02X:%02X:%02X\n",
-            eth->dst[0], eth->dst[1], eth->dst[2],
-            eth->dst[3], eth->dst[4], eth->dst[5];
+        std::cout << "Source MAC:      \n" << 
+            eth->src[0] << eth->src[1] << eth->src[2] <<
+            eth->src[3] << eth->src[4] << eth->src[5];
+        std::cout << "Destination MAC: \n" <<
+            eth->dst[0] << eth->dst[1] << eth->dst[2] <<
+            eth->dst[3] << eth->dst[4] << eth->dst[5];
         std::cout << "Ethernet header type: " << etherTypeConversion(eth->type) << '\n';
     }
 
