@@ -24,7 +24,7 @@
     <ClCompile Include="packetListener.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="IPtypes.h" />
+    <ClInclude Include="packetLayerData.h" />
     <ClInclude Include="packetHandling.h" />
     <ClInclude Include="packetListener.h" />
   </ItemGroup>

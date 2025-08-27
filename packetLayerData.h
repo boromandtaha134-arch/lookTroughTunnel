@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 struct EtherHdr {
     unsigned char dst[6]; // Destination MAC addrees 
     unsigned char src[6]; // source MAC address
@@ -8,8 +10,8 @@ struct EtherHdr {
 
 
 struct IpHdr {
-    unsigned char  ihl : 4;
     unsigned char  version : 4;
+    unsigned char  ihl : 4;
     unsigned char  tos;
     unsigned short totLen;
     unsigned short id;

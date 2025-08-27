@@ -13,7 +13,7 @@ void packetHandler(u_char* user, const struct pcap_pkthdr* header, const u_char*
     }
     else if (modeStatus == 2)
     {
-        ;
+        IpHeader ipHdr(receivedPacket);
     }
     else if (modeStatus == 3)
     {

@@ -8,7 +8,7 @@
 #include <WinSock2.h>
 #include <ws2tcpip.h>
 
-#include "IPtypes.h"
+#include "packetLayerData.h"
 
 extern int modeStatus;
 
@@ -65,7 +65,13 @@ public:
 
 class IpHeader : public PacketHandlerBody
 {
+public:
+    IpHeader(const u_char* packet) : PacketHandlerBody(packet)
+    {
+        const IpHdr* ip = reinterpret_cast<const IpHdr*>(packet);
 
+        std::cout << "Version: " << ip->version;
+    }
 };
 
 class TCP : public IpHeader
