@@ -1,16 +1,11 @@
 // a stream of trafic of apps
 
-#include <pcap.h>
-
-#include <iostream>
-#include <vector>
 #include <thread>
 #include <atomic>
 #include <ctime>
 #include <mutex>
 #include <condition_variable>
 
-#include "IPtypes.h"
 #include "packetListener.h"
 #include "packetHandling.h"
 
