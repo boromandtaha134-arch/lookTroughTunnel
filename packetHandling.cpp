@@ -30,7 +30,7 @@ void packetHandler(u_char* user, const struct pcap_pkthdr* header, const u_char*
     
 }
 
-std::string etherTypeConversion(const u_short& type) 
+std::string etherTypeConversion(const u_short type) 
 {
     static const std::unordered_map<u_int, std::string> etherTypes{
         {0x0800, "IPv4"},
@@ -51,7 +51,9 @@ std::string etherTypeConversion(const u_short& type)
 
     auto convertedType = etherTypes.find(type);
     if (convertedType != etherTypes.end())
+    {
         return convertedType->second;
+    }
     return "Unknown";
 }
 

@@ -10,11 +10,14 @@
 
 #include "packetLayerData.h"
 
+#define INTERNAL_USAGE_MODE 0
+#define USER_USAGE_MODE 1
+
 extern int modeStatus;
 
 void packetHandler(u_char* user, const struct pcap_pkthdr* header, const u_char* packet);
-std::string etherTypeConversion(const u_short& type);
 std::string& macFormatter(const uint8_t* macAddress);
+std::string etherTypeConversion(const u_short type);
 
 class PacketHandlerBody
 {
@@ -68,9 +71,21 @@ class IpHeader : public PacketHandlerBody
 public:
     IpHeader(const u_char* packet) : PacketHandlerBody(packet)
     {
-        const IpHdr* ip = reinterpret_cast<const IpHdr*>(packet);
+        const IpHdr* ip = reinterpret_cast<const IpHdr*>(packet + 14);
+        uint8_t version = ip->version >> 4;
+        uint8_t ihl = ip->ihl & 0x0F;
 
-        std::cout << "Version: " << ip->version;
+        std::cout << "Version: " << (int)version << "\n";
+        std::cout << "IHL: " << (int)ihl * 4 << " bytes\n";
+        std::cout << "Protocol: " << (int)ip->protocol << "\n";
+        std::cout << "Source IP: " << ((ip->saddr >> 24) & 0xFF) << "."
+            << ((ip->saddr >> 16) & 0xFF) << "."
+            << ((ip->saddr >> 8) & 0xFF) << "."
+            << (ip->saddr & 0xFF) << "\n";
+        std::cout << "Destination IP: " << ((ip->daddr >> 24) & 0xFF) << "."
+            << ((ip->daddr >> 16) & 0xFF) << "."
+            << ((ip->daddr >> 8) & 0xFF) << "."
+            << (ip->daddr & 0xFF) << "\n";
     }
 };
 
