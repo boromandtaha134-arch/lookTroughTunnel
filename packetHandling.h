@@ -4,20 +4,30 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
-#include <unordered_map>
 #include <WinSock2.h>
 #include <ws2tcpip.h>
 
 #include "packetLayerData.h"
 
-#define INTERNAL_USAGE_MODE 0
-#define USER_USAGE_MODE 1
+#define IPv4 0x0800
+#define ARP 0x0806
+#define WakeOnLAN 0x0842
+#define RARP 0x8035
+#define VLAN 0x8100
+#define IPX 0x8137
+#define IPv6 0x86DD
+#define PPPoEDiscovery 0x8863
+#define PPPoESession 0x8864
+#define EAPoL 0x888E
+#define PROFINET 0x8892
+#define HyperSCSI 0x889A
+#define MPLSUnicast 0x8847
+#define MPLSMulticast 0x8848
 
 extern int modeStatus;
 
 void packetHandler(u_char* user, const struct pcap_pkthdr* header, const u_char* packet);
 std::string& macFormatter(const uint8_t* macAddress);
-std::string etherTypeConversion(const u_short type);
 
 class PacketHandlerBody
 {
@@ -40,6 +50,8 @@ public:
 
 class EthernetHeader : public PacketHandlerBody
 {
+private:
+    std::string etherType;
 public:
     EthernetHeader(const u_char* packet) : PacketHandlerBody(packet)
     {
@@ -60,7 +72,61 @@ public:
 
         std::cout << "Source MAC:      " << formattedSource << '\n';
         std::cout << "Destination MAC: " << formattedDestination << '\n';
-        std::cout << "Ethernet header type: " << etherTypeConversion(ntohs(eth->type)) << '\n';
+
+        ethrTypeFormatter(ntohs(eth->type));
+        std::cout << "Ethernet header type: " << etherType << '\n';
+    }
+
+    void ethrTypeFormatter(uint16_t type)
+    {
+        switch (type)
+        {
+        case IPv4:
+            etherType = "IPv4";
+            break;
+        case ARP:
+            etherType = "ARP";
+            break;
+        case WakeOnLAN:
+            etherType = "WakeOnLAN";
+            break;
+        case RARP:
+            etherType = "RARP";
+            break;
+        case VLAN:
+            etherType = "VLAN";
+            break;
+        case IPX:
+            etherType = "IPX";
+            break;
+        case IPv6:
+            etherType = "IPv6";
+            break;
+        case PPPoEDiscovery:
+            etherType = "PPPoEDiscovery";
+            break;
+        case PPPoESession:
+            etherType = "PPPoESession";
+            break;
+        case EAPoL:
+            etherType = "EAPoL";
+            break;
+        case PROFINET:
+            etherType = "PROFINET";
+            break;
+        case HyperSCSI:
+            etherType = "HyperSCSI";
+            break;
+        case MPLSUnicast:
+            etherType = "MPLSUnicast";
+            break;
+        case MPLSMulticast:
+            etherType = "MPLSMulticast";
+            break;
+        default:
+            etherType = "Unknown";
+            break;
+        }
     }
 
     ~EthernetHeader() {}
@@ -71,8 +137,8 @@ class IpHeader : public PacketHandlerBody
 public:
     IpHeader(const u_char* packet) : PacketHandlerBody(packet)
     {
-        const IpHdr* ip = reinterpret_cast<const IpHdr*>(packet + 14);
-        uint8_t version = ip->version >> 4;
+        const IpHdr* ip = reinterpret_cast<const IpHdr*>(packet + sizeof(EtherHdr));
+        uint8_t version = ip->version << 4;
         uint8_t ihl = ip->ihl & 0x0F;
 
         std::cout << "Version: " << (int)version << "\n";

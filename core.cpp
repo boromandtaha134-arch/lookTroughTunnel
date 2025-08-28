@@ -26,14 +26,14 @@ int main()
 
     pcap_t* handle = listener.handelInit(currentDevice, 65536, 1, 1000);
 
-    //std::cout << "press < c > to change device or < m > to manage listening mode and press < q > to quiet\n";
+    std::cout << "press < c > to change device or < m > to manage listening mode and press < q > to quiet\n";
 
     std::cout << "[1]MAC address.\n[2]IP header.\n[3]Detecting protocol(TCP/UDP).\n[4]Payload.\n[5]Offset.\n";
     std::cin >> modeStatus;
 
     std::atomic<bool> running(true);
     std::thread t(collectingLoop, handle);
-    
+
     while (running)
     {
         char choise;
@@ -50,6 +50,8 @@ int main()
 
             t = std::thread(collectingLoop, handle);
             std::cout << "press < c > to change device or < m > to change listening mode and press < q > to quiet\n";
+            std::cout << "[1]MAC address.\n[2]IP header.\n[3]Detecting protocol(TCP/UDP).\n[4]Payload.\n[5]Offset.\n";
+            std::cin >> modeStatus;
         }
         else if ((choise == 'm') || (choise == 'M'))
         {

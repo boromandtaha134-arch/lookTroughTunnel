@@ -1,17 +1,19 @@
 #pragma once
 
-#include <cstdint>
-
 struct EtherHdr {
     unsigned char dst[6]; // Destination MAC addrees 
     unsigned char src[6]; // source MAC address
     unsigned short type;  // EtherType
 };
 
-
 struct IpHdr {
-    unsigned char  version : 4;
-    unsigned char  ihl : 4;
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+    unsigned int ihl : 4;
+    unsigned int version : 4;
+#elif __BYTE_ORDER == __BIG_ENDIAN
+    unsigned int version : 4;
+    unsigned int ihl : 4;
+#endif
     unsigned char  tos;
     unsigned short totLen;
     unsigned short id;
