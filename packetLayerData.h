@@ -6,14 +6,8 @@ struct EtherHdr {
     unsigned short type;  // EtherType
 };
 
-struct IpHdr {
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-    unsigned int ihl : 4;
-    unsigned int version : 4;
-#elif __BYTE_ORDER == __BIG_ENDIAN
-    unsigned int version : 4;
-    unsigned int ihl : 4;
-#endif
+struct IPv4Hdr {
+    uint8_t versionIhl;
     unsigned char  tos;
     unsigned short totLen;
     unsigned short id;
@@ -24,6 +18,10 @@ struct IpHdr {
     unsigned int   saddr;
     unsigned int   daddr;
 };
+
+/*struct IPv6Hdr {
+
+};and other versions will add*/
 
 struct TcpHdr {
     unsigned short source;

@@ -40,11 +40,6 @@ public:
     }
     PacketHandlerBody(const u_char* packet) : packet(packet) {}
 
-    const u_char* packetGetter() const
-    {
-        return packet;
-    }
-
     ~PacketHandlerBody() {};
 };
 
@@ -132,14 +127,14 @@ public:
     ~EthernetHeader() {}
 };
 
-class IpHeader : public PacketHandlerBody
+class IpHeader : public EthernetHeader
 {
 public:
-    IpHeader(const u_char* packet) : PacketHandlerBody(packet)
+    IpHeader(const u_char* packet) : EthernetHeader(packet)
     {
-        const IpHdr* ip = reinterpret_cast<const IpHdr*>(packet + sizeof(EtherHdr));
-        uint8_t version = ip->version << 4;
-        uint8_t ihl = ip->ihl & 0x0F;
+        const IPv4Hdr* ip = reinterpret_cast<const IPv4Hdr*>(packet + sizeof(EtherHdr));
+        uint8_t version = ip->versionIhl >> 4;
+        uint8_t ihl = ip->versionIhl & 0x0F;
 
         std::cout << "Version: " << (int)version << "\n";
         std::cout << "IHL: " << (int)ihl * 4 << " bytes\n";
