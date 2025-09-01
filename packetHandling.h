@@ -51,11 +51,17 @@ public:
 class EthernetHeader : public PacketHandlerBody
 {
 private:
-    std::string etherType;
+    const EtherHdr* eth;
 public:
     EthernetHeader(const u_char* packet) : PacketHandlerBody(packet)
     {
-        const EtherHdr* eth = reinterpret_cast<const EtherHdr*>(packet);
+        eth = reinterpret_cast<const EtherHdr*>(packet);
+    }
+
+    const EtherHdr* ethGetter() { return eth; }
+
+    void ethernetHeaderInfo()
+    {
 
         uint8_t sourceData[6] = {
             eth->src[0],  eth->src[1], eth->src[2],
@@ -72,13 +78,12 @@ public:
 
         std::cout << "Source MAC:      " << formattedSource << '\n';
         std::cout << "Destination MAC: " << formattedDestination << '\n';
-
-        ethrTypeFormatter(ntohs(eth->type));
-        std::cout << "Ethernet header type: " << etherType << '\n';
+        std::cout << "Ethernet header type: " << ethrTypeFormatter(ntohs(eth->type)) << '\n';
     }
 
-    void ethrTypeFormatter(uint16_t type)
+    std::string ethrTypeFormatter(uint16_t type)
     {
+        std::string etherType;
         switch (type)
         {
         case IPv4:
@@ -127,31 +132,40 @@ public:
             etherType = "Unknown";
             break;
         }
+        return etherType;
     }
 
     ~EthernetHeader() {}
 };
 
-class IpHeader : public PacketHandlerBody
+class IpHeader : public EthernetHeader
 {
 public:
-    IpHeader(const u_char* packet) : PacketHandlerBody(packet)
+    IpHeader(const u_char* packet) : EthernetHeader(packet)
     {
-        const IpHdr* ip = reinterpret_cast<const IpHdr*>(packet + sizeof(EtherHdr));
-        uint8_t version = ip->version << 4;
-        uint8_t ihl = ip->ihl & 0x0F;
+        if (ntohs(ethGetter()->type) == IPv4)
+        {
+            const IpHdr* ip = reinterpret_cast<const IpHdr*>(packet + sizeof(EtherHdr));
+            uint8_t version = ip->version;
+            uint8_t ihl = ip->ihl;
 
-        std::cout << "Version: " << (int)version << "\n";
-        std::cout << "IHL: " << (int)ihl * 4 << " bytes\n";
-        std::cout << "Protocol: " << (int)ip->protocol << "\n";
-        std::cout << "Source IP: " << ((ip->saddr >> 24) & 0xFF) << "."
-            << ((ip->saddr >> 16) & 0xFF) << "."
-            << ((ip->saddr >> 8) & 0xFF) << "."
-            << (ip->saddr & 0xFF) << "\n";
-        std::cout << "Destination IP: " << ((ip->daddr >> 24) & 0xFF) << "."
-            << ((ip->daddr >> 16) & 0xFF) << "."
-            << ((ip->daddr >> 8) & 0xFF) << "."
-            << (ip->daddr & 0xFF) << "\n";
+            std::cout << "Version: " << (int)version << "\n";
+            std::cout << "IHL: " << (int)ihl * 4 << " bytes\n";
+            std::cout << "Protocol: " << (int)ip->protocol << "\n";
+            std::cout << "Source IP: " << ((ip->saddr >> 24) & 0xFF) << "."
+                << ((ip->saddr >> 16) & 0xFF) << "."
+                << ((ip->saddr >> 8) & 0xFF) << "."
+                << (ip->saddr & 0xFF) << "\n";
+            std::cout << "Destination IP: " << ((ip->daddr >> 24) & 0xFF) << "."
+                << ((ip->daddr >> 16) & 0xFF) << "."
+                << ((ip->daddr >> 8) & 0xFF) << "."
+                << (ip->daddr & 0xFF) << "\n";
+        }
+        else
+        {
+            std::cout << "unsoppurted ip version\n";
+        }
+        
     }
 };
 

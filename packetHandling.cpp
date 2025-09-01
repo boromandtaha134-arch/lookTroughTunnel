@@ -10,6 +10,7 @@ void packetHandler(u_char* user, const struct pcap_pkthdr* header, const u_char*
     if (modeStatus == 1)
     {
         EthernetHeader etherHdr(receivedPacket);
+        etherHdr.ethernetHeaderInfo();
     }
     else if (modeStatus == 2)
     {
