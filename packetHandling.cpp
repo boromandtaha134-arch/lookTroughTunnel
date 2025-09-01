@@ -28,7 +28,6 @@ void packetHandler(u_char* user, const struct pcap_pkthdr* header, const u_char*
     {
         ;
     }
-    
 }
 
 std::string& macFormatter(const uint8_t* macAddress)

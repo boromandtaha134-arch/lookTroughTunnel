@@ -40,11 +40,6 @@ public:
     }
     PacketHandlerBody(const u_char* packet) : packet(packet) {}
 
-    const u_char* packetGetter() const
-    {
-        return packet;
-    }
-
     ~PacketHandlerBody() {};
 };
 
