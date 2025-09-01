@@ -140,7 +140,7 @@ public:
     {
         if (ntohs(ethGetter()->type) == IPv4)
         {
-            const IpHdr* ip = reinterpret_cast<const IpHdr*>(packet + sizeof(EtherHdr));
+            const IPv4Hdr* ip = reinterpret_cast<const IPv4Hdr*>(packet + sizeof(EtherHdr));
             uint8_t version = ip->version;
             uint8_t ihl = ip->ihl;
 

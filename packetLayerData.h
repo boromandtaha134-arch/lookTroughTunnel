@@ -6,7 +6,7 @@ struct EtherHdr {
     unsigned short type;  // EtherType
 };
 
-struct IpHdr {
+struct IPv4Hdr {
 #if __BYTE_ORDER == __LITTLE_ENDIAN
     unsigned int ihl : 4;
     unsigned int version : 4;
