@@ -15,10 +15,15 @@ void packetHandler(u_char* user, const struct pcap_pkthdr* header, const u_char*
     else if (modeStatus == 2)
     {
         IpHeader ipHdr(receivedPacket);
+        ipHdr.IPv4HeaderInfo();
     }
     else if (modeStatus == 3)
     {
-        ;
+        TCPHandler tcpHandler(receivedPacket);
+        tcpHandler.IPv4HeaderInfo();
+        #ifdef TCP
+        tcpHandler.TCPHeaderInfo();
+        #endif
     }
     else if (modeStatus == 4)
     {

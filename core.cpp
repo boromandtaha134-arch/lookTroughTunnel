@@ -50,7 +50,7 @@ int main()
 
             t = std::thread(collectingLoop, handle);
             std::cout << "press < c > to change device or < m > to change listening mode and press < q > to quiet\n";
-            std::cout << "[1]MAC address.\n[2]IP header.\n[3]Detecting protocol(TCP/UDP).\n[4]Payload.\n[5]Offset.\n";
+            std::cout << "[1]MAC address.\n[2]IP header.\n[3]Protocol info(TCP/UDP).\n[4]Payload.\n[5]Offset.\n";
             std::cin >> modeStatus;
         }
         else if ((choise == 'm') || (choise == 'M'))

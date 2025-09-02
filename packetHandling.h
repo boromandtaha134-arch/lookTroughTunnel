@@ -135,15 +135,39 @@ public:
 
 class IpHeader : public EthernetHeader
 {
+private:
+    const IPv4Hdr* ip;
 public:
     IpHeader(const u_char* packet) : EthernetHeader(packet)
     {
+        ip = reinterpret_cast<const IPv4Hdr*>(packet + sizeof(EtherHdr));
+        if ((int)ip->protocol == 6)
+        {
+            #ifndef TCP
+            #define TCP
+            #endif  
+        }
+        else if ((int)ip->protocol == 17)
+        {
+            #ifndef UDP
+            #define UDP
+            #endif
+        }
+        else
+        {
+            std::cout << "Unsupported protocol!\n";
+        }
+    }
+
+    void IPv4HeaderInfo()
+    {
         if (ntohs(ethGetter()->type) == IPv4)
         {
-            const IPv4Hdr* ip = reinterpret_cast<const IPv4Hdr*>(packet + sizeof(EtherHdr));
-            uint8_t version = ip->version;
-            uint8_t ihl = ip->ihl;
 
+
+            uint8_t version = ip->ihl_version >> 4;
+            uint8_t ihl = ip->ihl_version & 0x0F;
+            
             std::cout << "Version: " << (int)version << "\n";
             std::cout << "IHL: " << (int)ihl * 4 << " bytes\n";
             std::cout << "Protocol: " << (int)ip->protocol << "\n";
@@ -160,13 +184,62 @@ public:
         {
             std::cout << "unsoppurted ip version\n";
         }
-        
-    }
+    }               
 };
 
-class TCP : public IpHeader
+class TCPHandler : public IpHeader
 {
+private:
+    const TcpHdr* tcp;
+public:
+    TCPHandler(const u_char* packet) : IpHeader(packet)
+    {
+        #ifdef TCP
+         tcp = reinterpret_cast<const TcpHdr*>(packet + (sizeof(EtherHdr) + sizeof(IPv4Hdr)));
+        #endif
+    }
 
+    void TCPHeaderInfo()
+    {
+        std::cout << "Source port is: " << tcp->source << '\n';
+        std::cout << "Destination port is: " << tcp->dest << '\n';
+        std::cout << "Sequence number is: " << tcp->seq << '\n';
+        bool flags[8] = { flag() };
+        if (flags[5])
+        {
+            std::cout << "ACK sequence number is: " << tcp->ackSeq << '\n';
+        }
+        std::cout << "Header length is: " << (tcp->offsetReserved & 0xF0) << '\n';
+        std::cout << "Reserved is: " << (tcp->offsetReserved & 0x8F) << '\n';
+        std::cout << "nsFlag is: " << (tcp->offsetReserved & 0x7F) << '\n';
+
+    }
+
+    bool flag()
+    {
+        uint8_t flags = tcp->flags;
+        bool checkedFlags[8] = {
+            flags & 0x01,//FIN
+            flags & 0x02,//SYN
+            flags & 0x04,//RST
+            flags & 0x08,//PSH
+            flags & 0x10,//ACK
+            flags & 0x20,//URG
+            flags & 0x40,//ECE
+            flags & 0x80 //CWR
+        };
+
+        std::cout << "FIN: " << checkedFlags[0] << '\n';
+        std::cout << "SYN: " << checkedFlags[1] << '\n';
+        std::cout << "RST: " << checkedFlags[2] << '\n';
+        std::cout << "PSH: " << checkedFlags[3] << '\n';
+        std::cout << "ACK: " << checkedFlags[4] << '\n';
+        std::cout << "URG: " << checkedFlags[5] << '\n';
+        std::cout << "ECE: " << checkedFlags[6] << '\n';
+        std::cout << "CWR: " << checkedFlags[7] << '\n';
+
+        return checkedFlags;
+    }
 };
 
 class UDP : public IpHeader
