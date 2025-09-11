@@ -6,6 +6,7 @@
 #include <string>
 #include <WinSock2.h>
 #include <ws2tcpip.h>
+#include <thread>
 
 #include "packetLayerData.h"
 
@@ -26,6 +27,7 @@
 
 extern int modeStatus;
 
+void proxyProccess(int clientSock);
 void packetHandler(u_char* user, const struct pcap_pkthdr* header, const u_char* packet);
 std::string& macFormatter(const uint8_t* macAddress);
 
@@ -242,17 +244,61 @@ public:
     }
 };
 
-class UDP : public IpHeader
+class UDPHandler : public IpHeader
 {
 
 };
 
-class Payload : public PacketHandlerBody
+class Payload : public TCPHandler 
 {
+private:
+    const u_char* packet;
+public:
+    Payload(const u_char* packet) : TCPHandler(packet)
+    {
+        this->packet = packet;
+        #ifdef TCP
+        #else   
+        std::cout << "Unreacheable payload\n";
+        #endif
+    }
 
-};
+    void payloadHandler(int headerLen) {
+        const u_char* payload = packet + sizeof(EtherHdr) + sizeof(IPv4Hdr) + sizeof(TcpHdr);
+        int payload_len = headerLen - (sizeof(EtherHdr) + sizeof(IPv4Hdr) + sizeof(TcpHdr));
 
-class Offsets : public PacketHandlerBody
-{
+        if (payload_len > 0) {
+            std::string payload_str((char*)payload, payload_len);
+            std::cout << "Captured Payload: " << payload_str.substr(0, 200) << '\n';
 
+            if (payload_str.find("GET") != std::string::npos) {
+                std::cout << "HTTP GET detected! Ready to modify...\n";
+
+                WSADATA wsa;
+                int result = WSAStartup(MAKEWORD(2, 2), &wsa);
+                if (result != 0) {
+                    std::cout << "WSAStartup failed with error: " << result << '\n';
+                }
+
+                int listen_sock = socket(AF_INET, SOCK_STREAM, 0);
+                sockaddr_in addr;
+                addr.sin_family = AF_INET;
+                addr.sin_port = htons(8080);
+                addr.sin_addr.s_addr = INADDR_ANY;
+
+                bind(listen_sock, (sockaddr*)&addr, sizeof(addr));
+                listen(listen_sock, SOMAXCONN);
+                std::cout << "Proxy listening on port 8080\n";
+
+                while (true) {
+                    int client_sock = accept(listen_sock, nullptr, nullptr);
+                    std::thread proxy_thread(proxyProccess, client_sock);
+                    proxy_thread.detach();
+                }
+
+                closesocket(listen_sock);
+                WSACleanup();
+            }
+        }
+    }
 };
