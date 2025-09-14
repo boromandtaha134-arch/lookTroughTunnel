@@ -9,5 +9,6 @@
     <ClInclude Include="packetListener.h" />
     <ClInclude Include="packetLayerData.h" />
     <ClInclude Include="packetHandling.h" />
+    <ClInclude Include="proxy.h" />
   </ItemGroup>
 </Project>

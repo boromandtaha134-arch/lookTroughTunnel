@@ -8,6 +8,7 @@
 
 #include "packetListener.h"
 #include "packetHandling.h"
+#include "proxy.h"
 
 void collectingLoop(pcap_t* handle) 
 {
@@ -18,7 +19,7 @@ void collectingLoop(pcap_t* handle)
 
 int main() 
 {
-    system("netsh interface portproxy add v4tov4 listenport=80 listenaddress=0.0.0.0 connectport=8080 connectaddress=127.0.0.1");
+    int listenSock = Proxy::startProxy();
     Listener listener;
     std::vector<pcap_if_t*> devices = listener.deviceInit();
     pcap_if_t* currentDevice = listener.devicePicker();
@@ -69,7 +70,7 @@ int main()
     t.join();
     pcap_close(handle);
 
-    system("netsh interface portproxy delete v4tov4 listenport=80 listenaddress=0.0.0.0");
+    Proxy::stopProxy(listenSock);
 
     return 0;
 }
