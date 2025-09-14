@@ -57,7 +57,7 @@ int main()
         }
         else if ((choise == 'm') || (choise == 'M'))
         {
-            std::cout << "[1]MAC address.\n[2]IP header.\n[3]Detecting protocol(TCP/UDP).\n[4]Payload.\n[5]Offset.\n";
+            std::cout << "[1]MAC address.\n[2]IP header.\n[3]Detecting protocol(TCP/UDP).\n[4]Payload.\n";
             std::cin >> modeStatus;
         }
         else if ((choise == 'q') || (choise == 'Q'))

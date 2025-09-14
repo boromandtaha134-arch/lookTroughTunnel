@@ -138,21 +138,22 @@ class IpHeader : public EthernetHeader
 {
 private:
     const IPv4Hdr* ip;
+    bool IPv4Flag;
+    bool TCPFlag;
 public:
     IpHeader(const u_char* packet) : EthernetHeader(packet)
     {
+        IPv4Flag = false;
+        TCPFlag = false;
+
         ip = reinterpret_cast<const IPv4Hdr*>(packet + sizeof(EtherHdr));
         if ((int)ip->protocol == 6)
         {
-            #ifndef TCP
-            #define TCP
-            #endif  
+            TCPFlag = true;
         }
         else if ((int)ip->protocol == 17)
         {
-            #ifndef UDP
-            #define UDP
-            #endif
+            TCPFlag = false;
         }
         else
         {
@@ -164,7 +165,7 @@ public:
     {
         if (ntohs(ethGetter()->type) == IPv4)
         {
-
+            IPv4Flag = true;
 
             uint8_t version = ip->ihl_version >> 4;
             uint8_t ihl = ip->ihl_version & 0x0F;
@@ -183,9 +184,13 @@ public:
         }
         else
         {
+            IPv4Flag = false;
             std::cout << "unsoppurted ip version\n";
         }
-    }               
+    }
+
+    inline bool IPv4FlagGetter() { return IPv4Flag; }
+    inline bool TCPFlagGetter() { return TCPFlag; }
 };
 
 class TCPHandler : public IpHeader
@@ -195,9 +200,7 @@ private:
 public:
     TCPHandler(const u_char* packet) : IpHeader(packet)
     {
-        #ifdef TCP
-         tcp = reinterpret_cast<const TcpHdr*>(packet + (sizeof(EtherHdr) + sizeof(IPv4Hdr)));
-        #endif
+            tcp = reinterpret_cast<const TcpHdr*>(packet + (sizeof(EtherHdr) + sizeof(IPv4Hdr)));
     }
 
     void TCPHeaderInfo()
@@ -213,7 +216,6 @@ public:
         std::cout << "Header length is: " << (tcp->offsetReserved & 0xF0) << '\n';
         std::cout << "Reserved is: " << (tcp->offsetReserved & 0x8F) << '\n';
         std::cout << "nsFlag is: " << (tcp->offsetReserved & 0x7F) << '\n';
-
     }
 
     bool flag()
@@ -256,10 +258,7 @@ public:
     Payload(const u_char* packet) : TCPHandler(packet)
     {
         this->packet = packet;
-        #ifdef TCP
-        #else   
-        std::cout << "Unreacheable payload\n";
-        #endif
+        
     }
 
     void payloadHandler(int headerLen) 
